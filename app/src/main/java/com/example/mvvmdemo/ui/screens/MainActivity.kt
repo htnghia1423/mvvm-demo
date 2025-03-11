@@ -14,6 +14,7 @@ import com.example.mvvmdemo.ui.screens.items.ItemListScreen
 import com.example.mvvmdemo.ui.screens.auth.LoginScreen
 import com.example.mvvmdemo.ui.screens.auth.SignUpScreen
 import com.example.mvvmdemo.ui.screens.items.ItemCreateScreen
+import com.example.mvvmdemo.ui.screens.items.ItemUpdateScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,5 +44,9 @@ fun AppNavigation(sessionManager: SessionManager) {
             ItemDetailScreen(navController, itemId)
         }
         composable("itemCreate") { ItemCreateScreen(navController) }
+        composable("itemUpdate/{itemId}") { backStackEntry ->
+            val itemId = backStackEntry.arguments?.getString("itemId")?.toIntOrNull() ?: 0
+            ItemUpdateScreen(navController, itemId)
+        }
     }
 }

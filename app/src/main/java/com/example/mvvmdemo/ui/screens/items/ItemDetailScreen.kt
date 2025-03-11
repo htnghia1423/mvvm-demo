@@ -52,6 +52,11 @@ fun ItemDetailScreen(navController: NavController, itemId: Int) {
                 Text("User ID: ${it.userId}")
                 Spacer(modifier = Modifier.height(16.dp))
                 ActionButton(
+                    text = "Update",
+                    onClick = { navController.navigate("itemUpdate/${it.id}") }
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                ActionButton(
                     text = "Delete",
                     onClick = {
                         if (userId != -1) {

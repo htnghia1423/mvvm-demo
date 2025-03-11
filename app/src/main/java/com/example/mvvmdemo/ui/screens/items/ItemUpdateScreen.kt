@@ -19,18 +19,23 @@ import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ItemCreateScreen(navController: NavController) {
+fun ItemUpdateScreen(navController: NavController, itemId: Int) {
     val db = AppDatabase.getDatabase(navController.context)
     val itemViewModel: ItemViewModel = viewModel(factory = ViewModelFactory(db))
     val authViewModel: AuthViewModel = viewModel(factory = ViewModelFactory(db, navController.context))
+    val selectedItem by itemViewModel.selectedItem.collectAsState()
     val itemError by itemViewModel.itemError.collectAsState()
     val isLoading by itemViewModel.isLoading.collectAsState()
-
-    var name by remember { mutableStateOf("") }
-    var price by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
     val userId = authViewModel.getCurrentUserId()
+
+    var name by remember(selectedItem) { mutableStateOf(selectedItem?.name ?: "") }
+    var price by remember(selectedItem) { mutableStateOf(selectedItem?.price?.toString() ?: "") }
+    var description by remember(selectedItem) { mutableStateOf(selectedItem?.description ?: "") }
     var shouldNavigateBack by remember { mutableStateOf(false) }
+
+    LaunchedEffect(itemId) {
+        itemViewModel.loadItemDetail(itemId)
+    }
 
     LaunchedEffect(isLoading) {
         if (!isLoading && shouldNavigateBack && itemError == null) {
@@ -42,7 +47,7 @@ fun ItemCreateScreen(navController: NavController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Create Item") },
+                title = { Text("Update Item") },
                 navigationIcon = {
                     BackButton(onClick = { navController.popBackStack() })
                 }
@@ -85,11 +90,11 @@ fun ItemCreateScreen(navController: NavController) {
             )
             Spacer(modifier = Modifier.height(16.dp))
             ActionButton(
-                text = "Create",
+                text = "Update",
                 onClick = {
                     if (userId != -1) {
-                        itemViewModel.createItem(name, price, description, userId)
                         shouldNavigateBack = true
+                        itemViewModel.updateItem(itemId, name, price, description, userId)
                     }
                 },
                 enabled = !isLoading

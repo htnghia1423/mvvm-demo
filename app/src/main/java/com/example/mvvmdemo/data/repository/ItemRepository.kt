@@ -23,4 +23,8 @@ class ItemRepository(private val itemDao: ItemDao) {
     suspend fun getItemsByUserId(userId: Int): List<Item> {
         return itemDao.getItemsByUserId(userId)
     }
+
+    suspend fun updateItem(item: Item) {
+        return itemDao.update(item)
+    }
 }
