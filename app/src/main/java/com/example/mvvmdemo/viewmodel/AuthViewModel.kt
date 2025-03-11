@@ -68,6 +68,10 @@ class AuthViewModel(
         _authError.value = null
     }
 
+    fun setAuthError(error: String?) {
+        _authError.value = error
+    }
+
     fun getCurrentUserId(): Int = sessionManager.getUserId()
     fun getCurrentUsername(): String? = sessionManager.getUsername()
     fun isLoggedIn(): Boolean = sessionManager.isLoggedIn()

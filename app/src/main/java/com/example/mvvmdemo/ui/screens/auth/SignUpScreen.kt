@@ -78,13 +78,19 @@ fun SignUpScreen(navController: NavController) {
             )
             CustomTextField(
                 value = username,
-                onValueChange = { username = it },
+                onValueChange = {
+                    username = it
+                    viewModel.setAuthError(null)
+                },
                 label = "Username"
             )
             Spacer(modifier = Modifier.height(16.dp))
             PasswordTextField(
                 value = password,
-                onValueChange = { password = it },
+                onValueChange = {
+                    password = it
+                    viewModel.setAuthError(null)
+                },
                 label = "Password",
                 isPasswordVisible = passwordVisible,
                 onVisibilityToggle = { passwordVisible = !passwordVisible }
@@ -92,7 +98,10 @@ fun SignUpScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(16.dp))
             PasswordTextField(
                 value = confirmPassword,
-                onValueChange = { confirmPassword = it },
+                onValueChange = {
+                    confirmPassword = it
+                    viewModel.setAuthError(null)
+                },
                 label = "Confirm Password",
                 isPasswordVisible = confirmPasswordVisible,
                 onVisibilityToggle = { confirmPasswordVisible = !confirmPasswordVisible }
@@ -102,13 +111,18 @@ fun SignUpScreen(navController: NavController) {
                 text = "Sign Up",
                 onClick = {
                     if (confirmPassword.isBlank()) {
-                        viewModel.authError.value = "Confirm Password cannot be empty"
+                        viewModel.setAuthError("Confirm Password cannot be empty")
                     } else if (password != confirmPassword) {
-                        viewModel.authError.value = "Passwords do not match"
+                        viewModel.setAuthError("Passwords do not match")
                     } else {
                         viewModel.signUp(username, password)
                     }
                 }
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            ActionButton(
+                text = "Back to Login",
+                onClick = { navController.navigate("login") }
             )
             authError?.let {
                 Spacer(modifier = Modifier.height(8.dp))

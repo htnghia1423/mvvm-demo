@@ -66,13 +66,19 @@ fun LoginScreen(navController: NavController) {
             )
             CustomTextField(
                 value = username,
-                onValueChange = { username = it },
+                onValueChange = {
+                    username = it
+                    viewModel.setAuthError(null)
+                },
                 label = "Username"
             )
             Spacer(modifier = Modifier.height(16.dp))
             PasswordTextField(
                 value = password,
-                onValueChange = { password = it },
+                onValueChange = {
+                    password = it
+                    viewModel.setAuthError(null)
+                },
                 label = "Password",
                 isPasswordVisible = passwordVisible,
                 onVisibilityToggle = { passwordVisible = !passwordVisible }

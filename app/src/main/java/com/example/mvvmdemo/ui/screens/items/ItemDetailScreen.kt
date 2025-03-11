@@ -36,7 +36,7 @@ fun ItemDetailScreen(navController: NavController, itemId: Int) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Chi tiết sản phẩm") },
+                title = { Text("Product Detail") },
                 navigationIcon = {
                     BackButton(onClick = { navController.popBackStack() })
                 }
@@ -51,11 +51,6 @@ fun ItemDetailScreen(navController: NavController, itemId: Int) {
                 Text("Mô tả: ${it.description}")
                 Text("User ID: ${it.userId}")
                 Spacer(modifier = Modifier.height(16.dp))
-                ActionButton(
-                    text = "Quay lại",
-                    onClick = { navController.popBackStack() }
-                )
-                Spacer(modifier = Modifier.height(8.dp))
                 ActionButton(
                     text = "Delete",
                     onClick = {
