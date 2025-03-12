@@ -26,21 +26,22 @@ fun ItemUpdateScreen(navController: NavController, itemId: Int) {
     val selectedItem by itemViewModel.selectedItem.collectAsState()
     val itemError by itemViewModel.itemError.collectAsState()
     val isLoading by itemViewModel.isLoading.collectAsState()
+    val updateSuccess by itemViewModel.updateSuccess.collectAsState()
     val userId = authViewModel.getCurrentUserId()
 
     var name by remember(selectedItem) { mutableStateOf(selectedItem?.name ?: "") }
     var price by remember(selectedItem) { mutableStateOf(selectedItem?.price?.toString() ?: "") }
     var description by remember(selectedItem) { mutableStateOf(selectedItem?.description ?: "") }
-    var shouldNavigateBack by remember { mutableStateOf(false) }
 
     LaunchedEffect(itemId) {
         itemViewModel.loadItemDetail(itemId)
     }
 
-    LaunchedEffect(isLoading) {
-        if (!isLoading && shouldNavigateBack && itemError == null) {
+    LaunchedEffect(updateSuccess) {
+        if (updateSuccess) {
             delay(100)
             navController.popBackStack()
+            itemViewModel.resetUpdateSuccess()
         }
     }
 
@@ -93,7 +94,6 @@ fun ItemUpdateScreen(navController: NavController, itemId: Int) {
                 text = "Update",
                 onClick = {
                     if (userId != -1) {
-                        shouldNavigateBack = true
                         itemViewModel.updateItem(itemId, name, price, description, userId)
                     }
                 },

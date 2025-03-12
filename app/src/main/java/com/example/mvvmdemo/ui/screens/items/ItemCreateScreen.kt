@@ -25,17 +25,18 @@ fun ItemCreateScreen(navController: NavController) {
     val authViewModel: AuthViewModel = viewModel(factory = ViewModelFactory(db, navController.context))
     val itemError by itemViewModel.itemError.collectAsState()
     val isLoading by itemViewModel.isLoading.collectAsState()
+    val createSuccess by itemViewModel.createSuccess.collectAsState()
 
     var name by remember { mutableStateOf("") }
     var price by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     val userId = authViewModel.getCurrentUserId()
-    var shouldNavigateBack by remember { mutableStateOf(false) }
 
-    LaunchedEffect(isLoading) {
-        if (!isLoading && shouldNavigateBack && itemError == null) {
+    LaunchedEffect(createSuccess) {
+        if (createSuccess) {
             delay(100)
             navController.popBackStack()
+            itemViewModel.resetCreateSuccess()
         }
     }
 
@@ -89,7 +90,6 @@ fun ItemCreateScreen(navController: NavController) {
                 onClick = {
                     if (userId != -1) {
                         itemViewModel.createItem(name, price, description, userId)
-                        shouldNavigateBack = true
                     }
                 },
                 enabled = !isLoading

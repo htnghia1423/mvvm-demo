@@ -98,4 +98,16 @@ dependencies {
 
     //Icons
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
+
+    // Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+    // Retrofit with Scalar Converter
+    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
+
+    //Live data
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
+
+    //Koil
+    implementation("io.coil-kt:coil-compose:2.6.0")
 }

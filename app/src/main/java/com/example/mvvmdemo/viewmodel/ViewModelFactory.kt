@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.mvvmdemo.data.database.AppDatabase
 import com.example.mvvmdemo.data.repository.AuthRepository
 import com.example.mvvmdemo.data.repository.ItemRepository
+import com.example.mvvmdemo.data.repository.StudentRepository
 
 class ViewModelFactory(
     private val db: AppDatabase,
@@ -22,7 +23,10 @@ class ViewModelFactory(
             modelClass.isAssignableFrom(ItemViewModel::class.java) -> {
                 ItemViewModel(ItemRepository(db.itemDao())) as T
             }
-            else -> throw IllegalArgumentException("Unknown ViewModel class")
+            modelClass.isAssignableFrom(StudentViewModel::class.java) -> {
+                StudentViewModel(StudentRepository(db.studentDao())) as T
+            }
+            else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }
     }
 }

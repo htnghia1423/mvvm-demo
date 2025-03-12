@@ -34,7 +34,7 @@ fun SignUpScreen(navController: NavController) {
 
     LaunchedEffect(Unit) {
         if (viewModel.isLoggedIn()) {
-            navController.navigate("itemList") {
+            navController.navigate("studentList") {
                 popUpTo("signup") { inclusive = true }
             }
         }
@@ -42,7 +42,7 @@ fun SignUpScreen(navController: NavController) {
 
     LaunchedEffect(loginResult) {
         if (loginResult != null) {
-            navController.navigate("itemList") {
+            navController.navigate("studentList") {
                 popUpTo("signup") { inclusive = true }
             }
         }

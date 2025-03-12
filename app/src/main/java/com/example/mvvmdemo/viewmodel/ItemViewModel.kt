@@ -21,6 +21,12 @@ class ItemViewModel(private val repository: ItemRepository) : ViewModel() {
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
+    private val _createSuccess = MutableStateFlow(false)
+    val createSuccess: StateFlow<Boolean> = _createSuccess
+
+    private val _updateSuccess = MutableStateFlow(false)
+    val updateSuccess: StateFlow<Boolean> = _updateSuccess
+
     fun loadItems(userId: Int) {
         viewModelScope.launch {
             _items.value = repository.getItemsByUserId(userId)
@@ -36,6 +42,7 @@ class ItemViewModel(private val repository: ItemRepository) : ViewModel() {
     fun createItem(name: String, price: String, description: String, userId: Int) {
         viewModelScope.launch {
             _isLoading.value = true
+            _createSuccess.value = false
             when {
                 name.isBlank() -> _itemError.value = "Name cannot be empty"
                 name.length < 3 -> _itemError.value = "Name must be at least 3 characters"
@@ -55,6 +62,7 @@ class ItemViewModel(private val repository: ItemRepository) : ViewModel() {
                         repository.insertItem(newItem)
                         loadItems(userId)
                         _itemError.value = null
+                        _createSuccess.value = true
                     }
                 }
             }
@@ -77,6 +85,7 @@ class ItemViewModel(private val repository: ItemRepository) : ViewModel() {
     fun updateItem(itemId: Int, name: String, price: String, description: String, userId: Int) {
         viewModelScope.launch {
             _isLoading.value = true
+            _updateSuccess.value = false
             when {
                 name.isBlank() -> _itemError.value = "Name cannot be empty"
                 name.length < 3 -> _itemError.value = "Name must be at least 3 characters"
@@ -98,6 +107,7 @@ class ItemViewModel(private val repository: ItemRepository) : ViewModel() {
                             loadItems(userId)
                             _selectedItem.value = item
                             _itemError.value = null
+                            _updateSuccess.value = true
                         }
                     }
                 }
@@ -108,5 +118,13 @@ class ItemViewModel(private val repository: ItemRepository) : ViewModel() {
 
     fun setItemError(error: String?) {
         _itemError.value = error
+    }
+
+    fun resetCreateSuccess() {
+        _createSuccess.value = false
+    }
+
+    fun resetUpdateSuccess() {
+        _updateSuccess.value = false
     }
 }
