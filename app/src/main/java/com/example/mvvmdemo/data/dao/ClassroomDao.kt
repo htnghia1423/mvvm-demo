@@ -20,4 +20,10 @@ interface ClassroomDao {
 
     @Query("SELECT * FROM classrooms")
     suspend fun getAllClassrooms(): List<Classroom>
+
+    @Query("SELECT * FROM classrooms ORDER BY numberOfStudents ASC")
+    suspend fun getClassroomsSortedByStudentsAsc(): List<Classroom>
+
+    @Query("SELECT * FROM classrooms ORDER BY numberOfStudents DESC")
+    suspend fun getClassroomsSortedByStudentsDesc(): List<Classroom>
 }

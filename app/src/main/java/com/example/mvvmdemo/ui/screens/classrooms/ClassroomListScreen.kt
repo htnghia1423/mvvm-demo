@@ -1,6 +1,5 @@
 package com.example.mvvmdemo.ui.screens.classrooms
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -9,6 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -37,13 +37,24 @@ fun ClassroomListScreen(navController: NavController) {
     var isActive by remember { mutableStateOf(true) }
     var showDialog by remember { mutableStateOf(false) }
     var selectedClassroom by remember { mutableStateOf<Classroom?>(null) }
+    var searchQuery by remember { mutableStateOf("") }
+
+    val operationSuccess by viewModel.operationSuccess.collectAsState()
 
     LaunchedEffect(Unit) {
-        Log.d("ClassroomListScreen", "LaunchedEffect triggered, fetching classrooms")
         viewModel.fetchClassrooms()
     }
 
-    Log.d("ClassroomListScreen", "Rendering: Classrooms size: ${classrooms.size}, isLoading: $isLoading")
+    LaunchedEffect(searchQuery) {
+        viewModel.filterClassrooms(searchQuery)
+    }
+
+    LaunchedEffect(operationSuccess) {
+        operationSuccess?.let {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            viewModel.resetOperationSuccess()
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -52,6 +63,33 @@ fun ClassroomListScreen(navController: NavController) {
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Default.ArrowBackIosNew, contentDescription = "Back")
+                    }
+                },
+                actions = {
+                    var expanded by remember { mutableStateOf(false) }
+                    Box {
+                        IconButton(onClick = { expanded = true }) {
+                            Icon(Icons.Default.MoreVert, contentDescription = "Sort")
+                        }
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Sort by Students Ascending") },
+                                onClick = {
+                                    viewModel.sortClassroomsByStudentsAsc()
+                                    expanded = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Sort by Students Descending") },
+                                onClick = {
+                                    viewModel.sortClassroomsByStudentsDesc()
+                                    expanded = false
+                                }
+                            )
+                        }
                     }
                 }
             )
@@ -63,6 +101,13 @@ fun ClassroomListScreen(navController: NavController) {
                 .padding(16.dp)
                 .fillMaxSize()
         ) {
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                label = { Text("Search Classroom") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },

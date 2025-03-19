@@ -1,6 +1,5 @@
 package com.example.mvvmdemo.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mvvmdemo.data.model.Classroom
@@ -13,19 +12,17 @@ class ClassroomViewModel(private val repository: ClassroomRepository) : ViewMode
     val classrooms: StateFlow<List<Classroom>> = repository.classrooms
     val isLoading: StateFlow<Boolean> = repository.isLoading
 
-    private val _lastDeletedClassroom = MutableStateFlow<Classroom?>(null)
-    val lastDeletedClassroom: StateFlow<Classroom?> = _lastDeletedClassroom
+    private val _filteredClassrooms = MutableStateFlow<List<Classroom>>(emptyList())
+    val filteredClassrooms: StateFlow<List<Classroom>> = _filteredClassrooms
+
+    private val _operationSuccess = MutableStateFlow<String?>(null)
+    val operationSuccess: StateFlow<String?> = _operationSuccess
 
     init {
-        Log.d("ClassroomViewModel", "Initializing ViewModel")
-        viewModelScope.launch {
-            Log.d("ClassroomViewModel", "Fetching classrooms in init")
-            repository.fetchClassrooms()
-        }
+        fetchClassrooms()
     }
 
     fun fetchClassrooms() {
-        Log.d("ClassroomViewModel", "Manual fetchClassrooms called")
         viewModelScope.launch {
             repository.fetchClassrooms()
         }
@@ -33,23 +30,43 @@ class ClassroomViewModel(private val repository: ClassroomRepository) : ViewMode
 
     fun addClassroom(name: String, numberOfStudents: Int, isActive: Boolean) {
         viewModelScope.launch {
-            val currentList = classrooms.value
-            val newId = (currentList.maxOfOrNull { it.id } ?: 0) + 1
-            val newClassroom = Classroom(newId, name, numberOfStudents, isActive)
+            val newClassroom = Classroom(0, name, numberOfStudents, isActive)
             repository.addClassroom(newClassroom)
+            _operationSuccess.value = "Classroom added successfully"
         }
     }
 
     fun updateClassroomStudents(classroomId: Int, newNumberOfStudents: Int) {
         viewModelScope.launch {
-            val updatedClassrooms = classrooms.value.map { classroom ->
-                if (classroom.id == classroomId) {
-                    classroom.copy(numberOfStudents = newNumberOfStudents)
-                } else {
-                    classroom
-                }
+            val updatedClassroom = classrooms.value.find { it.id == classroomId }?.copy(numberOfStudents = newNumberOfStudents)
+            if (updatedClassroom != null) {
+                repository.updateClassroom(updatedClassroom)
+                _operationSuccess.value = "Classroom updated successfully"
             }
-            repository.updateClassrooms(updatedClassrooms)
         }
+    }
+
+    fun sortClassroomsByStudentsAsc() {
+        viewModelScope.launch {
+            repository.getClassroomsSortedByStudentsAsc()
+        }
+    }
+
+    fun sortClassroomsByStudentsDesc() {
+        viewModelScope.launch {
+            repository.getClassroomsSortedByStudentsDesc()
+        }
+    }
+
+    fun filterClassrooms(query: String) {
+        _filteredClassrooms.value = if (query.isEmpty()) {
+            classrooms.value
+        } else {
+            classrooms.value.filter { it.name.contains(query, ignoreCase = true) }
+        }
+    }
+
+    fun resetOperationSuccess() {
+        _operationSuccess.value = null
     }
 }
