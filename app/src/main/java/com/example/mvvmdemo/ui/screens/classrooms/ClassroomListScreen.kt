@@ -28,7 +28,7 @@ import com.example.mvvmdemo.viewmodel.ViewModelFactory
 fun ClassroomListScreen(navController: NavController) {
     val db = AppDatabase.getDatabase(navController.context)
     val viewModel: ClassroomViewModel = viewModel(factory = ViewModelFactory(db))
-    val classrooms by viewModel.classrooms.collectAsState()
+    val classrooms by viewModel.filteredClassrooms.collectAsState() // Observe filteredClassrooms
     val isLoading by viewModel.isLoading.collectAsState()
     val context = LocalContext.current
 
@@ -43,6 +43,7 @@ fun ClassroomListScreen(navController: NavController) {
 
     LaunchedEffect(Unit) {
         viewModel.fetchClassrooms()
+        viewModel.filterClassrooms("") // Initialize with full list
     }
 
     LaunchedEffect(searchQuery) {

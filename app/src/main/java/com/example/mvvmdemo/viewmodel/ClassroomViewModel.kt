@@ -25,6 +25,7 @@ class ClassroomViewModel(private val repository: ClassroomRepository) : ViewMode
     fun fetchClassrooms() {
         viewModelScope.launch {
             repository.fetchClassrooms()
+            _filteredClassrooms.value = repository.classrooms.value // Initialize with full list
         }
     }
 
