@@ -5,19 +5,22 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.mvvmdemo.BuildConfig
+import com.example.mvvmdemo.data.dao.ClassroomDao
 import com.example.mvvmdemo.data.dao.ItemDao
 import com.example.mvvmdemo.data.dao.StudentDao
 import com.example.mvvmdemo.data.dao.UserDao
+import com.example.mvvmdemo.data.model.Classroom
 import com.example.mvvmdemo.data.model.Item
 import com.example.mvvmdemo.data.model.Student
 import com.example.mvvmdemo.data.model.User
 import net.sqlcipher.database.SupportFactory
 
-@Database(entities = [Item::class, User::class, Student::class], version = 2, exportSchema = false)
+@Database(entities = [Item::class, User::class, Student::class, Classroom::class], version = 3, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun itemDao(): ItemDao
     abstract fun userDao(): UserDao
     abstract fun studentDao(): StudentDao
+    abstract fun classroomDao(): ClassroomDao
 
     companion object {
         @Volatile

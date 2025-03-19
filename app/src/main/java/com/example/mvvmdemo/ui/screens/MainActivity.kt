@@ -13,9 +13,10 @@ import com.example.mvvmdemo.ui.screens.items.ItemDetailScreen
 import com.example.mvvmdemo.ui.screens.items.ItemListScreen
 import com.example.mvvmdemo.ui.screens.auth.LoginScreen
 import com.example.mvvmdemo.ui.screens.auth.SignUpScreen
+import com.example.mvvmdemo.ui.screens.classrooms.ClassroomListScreen
 import com.example.mvvmdemo.ui.screens.items.ItemCreateScreen
 import com.example.mvvmdemo.ui.screens.items.ItemUpdateScreen
-import com.example.mvvmdemo.ui.screens.students.StudentListScreen
+//import com.example.mvvmdemo.ui.screens.students.StudentListScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +35,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppNavigation(sessionManager: SessionManager) {
     val navController = rememberNavController()
-    val startDestination = if (sessionManager.isLoggedIn()) "studentList" else "login"
+    val startDestination = if (sessionManager.isLoggedIn()) "classroomList" else "login"
 
     NavHost(navController = navController, startDestination = startDestination) {
         composable("login") { LoginScreen(navController) }
@@ -49,6 +50,7 @@ fun AppNavigation(sessionManager: SessionManager) {
             val itemId = backStackEntry.arguments?.getString("itemId")?.toIntOrNull() ?: 0
             ItemUpdateScreen(navController, itemId)
         }
-        composable("studentList") { StudentListScreen(navController) }
+//        composable("studentList") { StudentListScreen(navController) }
+        composable ("classroomList"){ ClassroomListScreen(navController) }
     }
 }
